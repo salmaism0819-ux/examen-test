@@ -42,3 +42,17 @@ jobs:
 
       - run: docker build -t ${{ secrets.DOCKER_USERNAME }}/examen-test:latest .
       - run: docker push ${{ secrets.DOCKER_USERNAME }}/examen-test:latest
+      security_scan:
+        name: Security - Trivy Scan
+        runs-on: ubuntu-latest
+        needs: cd
+    
+        steps:
+          - name: Installer Trivy
+            uses: aquasecurity/trivy-action@0.20.0
+            with:
+              image-ref: ${{ secrets.DOCKER_USERNAME }}/examen-test:latest
+              severity: HIGH,CRITICAL
+              exit-code: 0
+              format: table
+    
